@@ -49,3 +49,64 @@ body {
     font-weight: bold;
     color: #d9534f; /* Cor de destaque para a localização */
 }
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.btn-novo {
+    padding: 10px 15px;
+    background-color: #28a745; /* Verde */
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+form label {
+    margin-top: 10px;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+form input, form button {
+    padding: 10px;
+    border: 1px solid #ddd;
+}
+
+form button {
+    margin-top: 20px;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+    border: none;
+}
+
+.card-actions {
+    margin-top: 15px;
+    text-align: right;
+}
+
+.btn-editar, .btn-excluir {
+    padding: 8px 12px;
+    border: none;
+    color: white;
+    cursor: pointer;
+    border-radius: 4px;
+    margin-left: 10px;
+}
+
+.btn-editar {
+    background-color: #ffc107; /* Amarelo */
+}
+
+.btn-excluir {
+    background-color: #dc3545; /* Vermelho */
+}
