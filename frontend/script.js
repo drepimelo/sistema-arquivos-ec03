@@ -124,4 +124,104 @@ document.addEventListener('DOMContentLoaded', () => {
         })
         .catch(error => console.error('Erro:', error));
     }
-});
+    // Função que cria o HTML para mostrar os resultados na tela
+    function exibirResultados(funcionarios) {
+        resultadosDiv.innerHTML = ''; 
+
+        if (funcionarios.length === 0) {
+            resultadosDiv.innerHTML = '<p>Nenhum funcionário encontrado.</p>';
+            return;
+        }
+
+        funcionarios.forEach(func => {
+            const funcionarioCard = document.createElement('div');
+            funcionarioCard.className = 'card';
+            
+            // Adicionamos o novo botão "Ver Detalhes"
+            funcionarioCard.innerHTML = `
+                <h2>${func.nome_completo}</h2>
+                <p><strong>Matrícula:</strong> ${func.matricula || 'N/A'}</p>
+                <p class="localizacao"><strong>Localização da Pasta:</strong> ${func.localizacao_fisica || 'Não informada'}</p>
+                
+                <div class="card-actions">
+                    <button class="btn-detalhes" data-id="${func.id}">Ver Detalhes</button>
+                    <button class="btn-editar" data-id="${func.id}">Editar</button>
+                    <button class="btn-excluir" data-id="${func.id}">Excluir</button>
+                </div>
+            `;
+            
+            resultadosDiv.appendChild(funcionarioCard);
+        });
+    }
+
+    // Atualizamos o 'ouvinte' de cliques para incluir a nova ação
+    resultadosDiv.addEventListener('click', (event) => {
+        const target = event.target;
+
+        if (target.classList.contains('btn-excluir')) {
+            const funcionarioId = target.dataset.id;
+            if (confirm('Tem certeza que deseja excluir este funcionário?')) {
+                excluirFuncionario(funcionarioId);
+            }
+        }
+        
+        if (target.classList.contains('btn-editar')) {
+            const funcionarioId = target.dataset.id;
+            window.location.href = `editar.html?id=${funcionarioId}`;
+        }
+        
+        // NOVA LÓGICA: Se o botão "Ver Detalhes" for clicado...
+        if (target.classList.contains('btn-detalhes')) {
+            const funcionarioId = target.dataset.id;
+            mostrarDetalhes(funcionarioId); // Chama a nova função
+        }
+    });
+
+    // ... (função excluirFuncionario continua aqui) ...
+
+    // NOVA FUNÇÃO para buscar dados e mostrar o modal
+    async function mostrarDetalhes(id) {
+        const url = `http://127.0.0.1:5000/funcionarios/${id}`;
+        try {
+            const response = await fetch(url);
+            const funcionario = await response.json();
+
+            // Pega o elemento do modal no HTML
+            const modal = document.getElementById('detalhesModal');
+            const modalContent = document.getElementById('modalContent');
+
+            // Preenche o conteúdo do modal com todas as informações
+            modalContent.innerHTML = `
+                <h2>Detalhes de ${funcionario.nome_completo}</h2>
+                <p><strong>CPF:</strong> ${funcionario.cpf}</p>
+                <p><strong>Matrícula:</strong> ${funcionario.matricula || 'N/A'}</p>
+                <p><strong>Cargo:</strong> ${funcionario.cargo}</p>
+                <p><strong>Tipo de Vínculo:</strong> ${funcionario.tipo_vinculo}</p>
+                <p><strong>Situação:</strong> ${funcionario.situacao}</p>
+                <p><strong>Data de Admissão:</strong> ${new Date(funcionario.data_admissao).toLocaleDateString()}</p>
+                <p class="localizacao"><strong>Localização da Pasta Física:</strong> ${funcionario.localizacao_fisica || 'Não informada'}</p>
+            `;
+
+            // Mostra o modal
+            modal.style.display = 'block';
+
+        } catch (error) {
+            console.error('Erro ao buscar detalhes do funcionário:', error);
+        }
+    }
+    // LÓGICA PARA FECHAR O MODAL
+    const modal = document.getElementById('detalhesModal');
+    const closeBtn = document.querySelector('.close-btn');
+
+    // Fecha ao clicar no 'X'
+    closeBtn.onclick = function() {
+        modal.style.display = "none";
+    }
+
+    // Fecha ao clicar fora do conteúdo do modal
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+}); // Fim do addEventListener
